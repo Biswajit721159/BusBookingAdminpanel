@@ -21,36 +21,36 @@ useEffect(()=>{
 },[])
 
 function submit(){
-    // setbutton("Please Wait ...")
-    // setdisabled(true)
-    // fetch('https://book-bus-api.vercel.app/busowner/login',{
-    //     method:'PATCH',
-    //     headers:{
-    //         'Accept':'application/json',
-    //         'Content-Type':'application/json'
-    //     },
-    //     body:JSON.stringify({
-    //        email:email,password:password
-    //     })
-    // })
-    // .then(response=>response.json())
-    // .then((result)=>{
-    //     if(result.auth)
-    //     {
-    //         delete result.status
-    //         localStorage.setItem("user",JSON.stringify(result))
-    //         history('/')
-    //     }
-    //     else{
-    //         setbutton("Submit")
-    //         setdisabled(false)
-    //         setwronguser(true)
-    //     }
-    // },(error)=>{
-    //     setbutton("Submit")
-    //     setdisabled(false)
-    //     setwronguser(true)
-    // })
+    setbutton("Please Wait ...")
+    setdisabled(true)
+    fetch('https://book-bus-api.vercel.app/adminpanel/login',{
+        method:'PATCH',
+        headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+           email:email,password:password
+        })
+    })
+    .then(response=>response.json())
+    .then((result)=>{
+        if(result.auth)
+        {
+            delete result.status
+            localStorage.setItem("user",JSON.stringify(result))
+            history('/')
+        }
+        else{
+            setbutton("Submit")
+            setdisabled(false)
+            setwronguser(true)
+        }
+    },(error)=>{
+        setbutton("Submit")
+        setdisabled(false)
+        setwronguser(true)
+    })
 }
 
   return (

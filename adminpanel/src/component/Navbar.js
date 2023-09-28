@@ -1,7 +1,24 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+import React, { useEffect } from 'react'
+import {Link, useNavigate} from 'react-router-dom'
 
 const Navbar=()=>{
+
+    const userinfo=JSON.parse(localStorage.getItem('user'))
+    const history=useNavigate()
+    
+    function logout()
+    {
+        localStorage.removeItem('user');
+        history('/Login')
+    }
+
+    useEffect(()=>{
+        if(userinfo==null)
+        {
+            history('/Login')
+        }
+    },[])
+    
     return(
         <>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -13,25 +30,28 @@ const Navbar=()=>{
                 <div className="collapse navbar-collapse" style={{marginLeft:"200px"}} id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                        <Link className="nav-link" to="/">Home</Link>
+                           <Link className="nav-link" to="/">Home</Link>
                         </li>
-                        <li className="nav-item">
-                        <Link className="nav-link" to="/Login">Login</Link>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a className="dropdown-item" href="#">Action</a></li>
-                                <li><a className="dropdown-item" href="#">Another action</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </li>
+                        {
+                            userinfo!=null?
+                            <li className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Welcome {userinfo.user.name}
+                                </a>
+                                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a className="dropdown-item" href="#">Action</a></li>
+                                    <li><a className="dropdown-item" href="#">Another action</a></li>
+                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </li>:
+                            <li className="nav-item">
+                               <Link className="nav-link" to="/Login">Login</Link>
+                             </li>
+                        }
                     </ul>
-                    <form className="d-flex">
-                        <button className="btn btn-success btn-sm" type="submit">Logout  <i class="fa fa-sign-out" aria-hidden="true"></i></button>
-                    </form>
+                    <div className="d-flex">
+                        <button className="btn btn-success btn-sm" type="submit" onClick={logout}>Logout  <i class="fa fa-sign-out" aria-hidden="true"></i></button>
+                    </div>
                 </div>
             </div>
         </nav>
