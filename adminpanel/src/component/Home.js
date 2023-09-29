@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {Link, useNavigate } from "react-router-dom";
 import loader from "../images/loader.gif"
-import swal from 'sweetalert'
+import swal from 'sweetalert';
 
 const Home=()=>{
     const [data,setdata]=useState([])
@@ -20,23 +20,56 @@ const Home=()=>{
         }
     },[])
 
-    function approved(status)
+    function approved(status,data)
     {
         if(status=='pending')
         {
             swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this imaginary file!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
-                closeOnConfirm: false
-              },
-              function()
-              {
-                swal("Deleted!", "Your imaginary file has been deleted.", "success");
-              });
+                title: "Are you sure To Approved ?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+              })
+              .then((willDelete) => {
+                if (willDelete) {
+                    setload(true)
+                    fetch(`http://localhost:5000/updatebusdetail/`,{
+                        method:'PUT',
+                        headers:{
+                            'Accept':'application/json',
+                            'Content-Type':'application/json',
+                             auth:`bearer ${userinfo.auth}`
+                        },
+                        body:JSON.stringify({
+                          data:data
+                        }) 
+                      })
+                      .then(responce=>responce.json()).then((res)=>{
+                          if(res!=undefined)
+                          {
+                              if(res.status==200)
+                              {
+                                 loadData()
+                                 swal("Yes This Bus is Successfully Approved", {
+                                    icon: "success",
+                                 });
+                              }
+                              else{
+                                setload(false)
+                                history('*')
+                              }
+                          }
+                      },(error)=>{
+                        setload(false)
+                        history('*')
+                      })
+
+                } 
+                else
+                {
+                  swal("Ok No Problem !");
+                }
+            });
         }
     }
 
@@ -86,7 +119,7 @@ const Home=()=>{
                                     <th>*{item.station_data[0].station} - {item.station_data[(item.station_data.length)-1].station}</th>
                                     {
                                         item.status=='pending'?
-                                        <td><button className='btn btn-primary btn-sm' onClick={()=>approved(item.status)}>{item.status}</button></td>
+                                        <td><button className='btn btn-primary btn-sm' onClick={()=>approved(item.status,item)}>{item.status}</button></td>
                                         : <td><button className='btn btn-primary btn-sm' disabled>{item.status}</button></td>
                                     }
                                     <td><Link to={`/View_Bus/${item._id}`}><button className='btn btn-outline-primary btn-sm'>View More</button></Link></td>
