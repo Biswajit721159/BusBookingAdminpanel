@@ -33,7 +33,7 @@ const Home=()=>{
               .then((willDelete) => {
                 if (willDelete) {
                     setload(true)
-                    fetch(`http://localhost:5000/updatebusdetail/`,{
+                    fetch(`https://book-bus-api.vercel.app/updatebusdetail/`,{
                         method:'PUT',
                         headers:{
                             'Accept':'application/json',
@@ -60,6 +60,7 @@ const Home=()=>{
                               }
                           }
                       },(error)=>{
+                        console.log("Come")
                         setload(false)
                         history('*')
                       })
