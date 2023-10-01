@@ -91,6 +91,16 @@ const Home=()=>{
         })
     }
 
+    function sendback(id)
+    {
+        swal("Write something here:", {
+            content: "input",
+          })
+          .then((value) => {
+            swal(`You typed: ${value}`);
+        });
+    }
+
 
     return(
         <>
@@ -108,6 +118,7 @@ const Home=()=>{
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -121,10 +132,11 @@ const Home=()=>{
                                     {
                                         item.status=='pending'?
                                         <td><button className='btn btn-primary btn-sm' onClick={()=>approved(item.status,item)}>{item.status}</button></td>
-                                        : <td><button className='btn btn-primary btn-sm' disabled>{item.status}</button></td>
+                                        : <td><button className='btn btn-primary btn-sm' disabled> {item.status} </button></td>
                                     }
                                     <td><Link to={`/View_Bus/${item._id}`}><button className='btn btn-outline-primary btn-sm'>View More</button></Link></td>
-                                    <td><button className='btn btn-dark btn-sm' >Edit</button></td>
+                                    <td><button className='btn btn-outline-info btn-sm' onClick={()=>{sendback(item._id)}}>Send Back</button></td>
+                                    <td><button className='btn btn-dark btn-sm'disabled >Edit</button></td>
                                     <td><button className='btn btn-danger btn-sm' >Delete</button></td>
                                 </tr>
                             ))
