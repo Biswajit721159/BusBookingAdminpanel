@@ -41,7 +41,8 @@ const Home=()=>{
                              auth:`bearer ${userinfo.auth}`
                         },
                         body:JSON.stringify({
-                          data:data
+                          data:data,
+                          status:'approved'
                         }) 
                       })
                       .then(responce=>responce.json()).then((res)=>{
@@ -60,7 +61,6 @@ const Home=()=>{
                               }
                           }
                       },(error)=>{
-                        console.log("Come")
                         setload(false)
                         history('*')
                       })
@@ -91,13 +91,68 @@ const Home=()=>{
         })
     }
 
-    function sendback(id)
+    function sendback(id,data)
     {
         swal("Write something here:", {
             content: "input",
-          })
+        })
           .then((value) => {
-            swal(`You typed: ${value}`);
+            setload(true)
+            fetch('https://book-bus-api.vercel.app/sendMessage',{
+                method:'POST',
+                headers:{
+                    'Accept':'application/json',
+                    'Content-Type':'application/json',
+                     auth:`bearer ${userinfo.auth}`
+                },
+                body:JSON.stringify({
+                   bus_id:id,
+                   message:value,
+                }) 
+            })
+            .then(responce=>responce.json()).then((res)=>{
+                if(res!=undefined && res.status==200)
+                {
+                      fetch(`https://book-bus-api.vercel.app/updatebusdetail/`,{
+                          method:'PUT',
+                          headers:{
+                              'Accept':'application/json',
+                              'Content-Type':'application/json',
+                               auth:`bearer ${userinfo.auth}`
+                          },
+                          body:JSON.stringify({
+                            data:data,
+                            status:'Rejected'
+                          }) 
+                        })
+                        .then(responce=>responce.json()).then((res)=>{
+                            if(res!=undefined)
+                            {
+                                if(res.status==200)
+                                {
+                                   loadData()
+                                   swal("Yes This Bus is Successfully Rejected", {
+                                      icon: "success",
+                                   });
+                                }
+                                else{
+                                  setload(false)
+                                  history('*')
+                                }
+                            }
+                        },(error)=>{
+                          setload(false)
+                          history('*')
+                        })
+                }
+                else if(res!=undefined && res.status==498)
+                {
+                    setload(false)
+                     history('*')
+                }
+            },(error)=>{
+                history('*')
+            })
         });
     }
 
@@ -134,10 +189,12 @@ const Home=()=>{
                                         <td><button className='btn btn-primary btn-sm' onClick={()=>approved(item.status,item)}>{item.status}</button></td>
                                         : <td><button className='btn btn-primary btn-sm' disabled> {item.status} </button></td>
                                     }
+                                    {
+                                        item.status=='pending'?
+                                        <td><button className='btn btn-danger btn-sm' onClick={()=>{sendback(item._id,item)}}>Reject</button></td>
+                                        :<td><button className='btn btn-danger btn-sm' disabled>Reject</button></td>
+                                    }
                                     <td><Link to={`/View_Bus/${item._id}`}><button className='btn btn-outline-primary btn-sm'>View More</button></Link></td>
-                                    <td><button className='btn btn-outline-info btn-sm' onClick={()=>{sendback(item._id)}}>Send Back</button></td>
-                                    <td><button className='btn btn-dark btn-sm'disabled >Edit</button></td>
-                                    <td><button className='btn btn-danger btn-sm' >Delete</button></td>
                                 </tr>
                             ))
                         }
